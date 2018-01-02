@@ -1,0 +1,10 @@
+package: k8s-webhook-admission-controller
+import:
+- package: github.com/bmizerany/pat
+- package: github.com/spf13/cobra
+- package: k8s.io/api
+  version: kubernetes-1.9.0
+- package: k8s.io/apimachinery
+  version: kubernetes-1.9.0
+- package: k8s.io/client-go
+  version: v6.0.0

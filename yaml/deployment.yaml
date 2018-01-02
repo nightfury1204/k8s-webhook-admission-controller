@@ -1,0 +1,21 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: validating-webhook-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: validating-webhook-server
+  template:
+    metadata:
+      labels:
+        app: validating-webhook-server
+    spec:
+      containers:
+      - name: webhook-server
+        #args:
+        #- serve
+        #image: nightfury1204/hello_server
+        #ports:
+        #- containerPort: 8080
