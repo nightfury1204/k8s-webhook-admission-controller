@@ -14,8 +14,7 @@ spec:
     spec:
       containers:
       - name: webhook-server
-        #args:
-        #- serve
-        #image: nightfury1204/hello_server
-        #ports:
-        #- containerPort: 8080
+        image: nightfury1204/validating-webhook-try:v1alpha1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080

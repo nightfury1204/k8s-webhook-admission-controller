@@ -42,7 +42,7 @@ var serveCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(serveCmd)
 	serveCmd.PersistentFlags().StringVar(&port, "port", "8080", "assign the port number")
-	serveCmd.PersistentFlags().StringVarP(&kubeconfig, "configPath", "c", home+"/.kube/config", "kube config path")
+	serveCmd.PersistentFlags().StringVarP(&kubeconfig, "configPath", "c", "", "kube config path")
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
