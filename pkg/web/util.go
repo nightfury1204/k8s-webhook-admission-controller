@@ -36,10 +36,10 @@ func validateResource(data []byte) (*adv1beta1.AdmissionResponse, error) {
 		return nil,err
 	}
 	reviewResponse := adv1beta1.AdmissionResponse{}
-	if podWatch.Spec.Replicas != 1 {
+	if podWatch.Spec.Replicas < 1 || podWatch.Spec.Replicas > 3{
 		reviewResponse.Allowed = false
 		reviewResponse.Result = &metav1.Status{
-			Reason:"Number of replicas must be 1",
+			Reason:"Number of replicas must be in between 1 and 3",
 		}
 		return &reviewResponse,nil
 	}
@@ -90,7 +90,7 @@ func getTlsConfig(clientset *kubernetes.Clientset, serverCert []byte, serverKey 
 	return &tls.Config{
 		Certificates: []tls.Certificate{sCert},
 		ClientCAs:    apiserverCA,
-		ClientAuth:   tls.RequireAndVerifyClientCert,
+		ClientAuth:   tls.NoClientCert,
 	},nil
 }
 
@@ -99,9 +99,9 @@ func getTlsConfig(clientset *kubernetes.Clientset, serverCert []byte, serverKey 
 func selfRegistration(clientset *kubernetes.Clientset, caCert []byte) {
 	time.Sleep(10 * time.Second)
 	client := clientset.AdmissionregistrationV1beta1().ValidatingWebhookConfigurations()
-	_, err := client.Get("example-config", metav1.GetOptions{})
+	_, err := client.Get("validating-webhook-config", metav1.GetOptions{})
 	if err == nil {
-		if err2 := client.Delete("example-config", nil); err2 != nil {
+		if err2 := client.Delete("validating-webhook-config", nil); err2 != nil {
 			glog.Fatal(err2)
 		}
 	}
@@ -123,7 +123,7 @@ func selfRegistration(clientset *kubernetes.Clientset, caCert []byte) {
 				ClientConfig: regv1beta1.WebhookClientConfig{
 					Service: &regv1beta1.ServiceReference{
 						Namespace: "default",
-						Name:      "validating-webhook",
+						Name:      "validating-webhook-service",
 					},
 					CABundle: caCert,
 				},

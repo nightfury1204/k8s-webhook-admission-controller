@@ -12,6 +12,7 @@ spec:
       labels:
         app: validating-webhook-server
     spec:
+      serviceAccountName: webhook-service-ac
       containers:
       - name: webhook-server
         image: nightfury1204/validating-webhook-try:v1alpha1

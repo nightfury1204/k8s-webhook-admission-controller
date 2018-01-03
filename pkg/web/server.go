@@ -77,6 +77,10 @@ func RunServer(port, kubeconfig string) error {
 		Handler:      m,
 		TLSConfig:    tlsConfig,
 	}
+	if err!=nil {
+		return fmt.Errorf("failed to read ca.key. Reason: %v.", err)
+	}
+
 	log.Println("Server starting.....")
 	err = server.ListenAndServeTLS("", "")
 	if err != nil {

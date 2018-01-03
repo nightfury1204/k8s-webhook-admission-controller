@@ -6,8 +6,5 @@ spec:
   selector:
     app: validating-webhook-server
   ports:
-  - name: https
-    protocol: TCP
-    port: 8080
+  - port: 443
     targetPort: 8080
-  type: NodePort

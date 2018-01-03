@@ -10,7 +10,7 @@ import (
 )
 
 // initcertCmd represents the initcert command
-func GenerateCertificate(writeDir string, ip string, genClientCert bool) error {
+func GenerateCertificate(writeDir string, ip string,dns string, genClientCert bool) error {
 	dir := filepath.Join(writeDir, "pki")
 	createDir(dir)
 
@@ -32,12 +32,18 @@ func GenerateCertificate(writeDir string, ip string, genClientCert bool) error {
 	}
 	fmt.Println("Wrote ca certificates in ", dir)
 
+	altNames := cert.AltNames{}
+	if len(ip)>0 {
+		altNames.IPs = []net.IP{net.ParseIP(ip)}
+	}
+	if len(dns)>0 {
+		altNames.DNSNames = []string{dns}
+	}
+
 	//create server.cert,server.key
 	cfgForServer := cert.Config{
 		CommonName: "server",
-		AltNames: cert.AltNames{
-			IPs: []net.IP{net.ParseIP(ip)},
-		},
+		AltNames: altNames,
 		Usages: []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
 	}
 	serverKey, err := cert.NewPrivateKey()

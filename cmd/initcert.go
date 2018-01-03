@@ -25,6 +25,7 @@ import (
 var (
 	writeDir string
 	ip       string
+	dns       string
 	genClientCert bool
 )
 
@@ -33,7 +34,7 @@ var initcertCmd = &cobra.Command{
 	Use:   "initcert",
 	Short: "Create CA cert, server.cert, server.key, client.cert, client.key",
 	Run: func(cmd *cobra.Command, args []string) {
-		err := certificate.GenerateCertificate(writeDir, ip,genClientCert)
+		err := certificate.GenerateCertificate(writeDir, ip,dns,genClientCert)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -43,6 +44,7 @@ var initcertCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(initcertCmd)
 	initcertCmd.PersistentFlags().StringVar(&writeDir, "dir", "/home/ac/go/src/k8s-webhook-admission-controller", "directory to write cert files")
-	initcertCmd.PersistentFlags().StringVar(&ip, "ip", "127.0.0.1", "ip of server, required for server certificate")
+	initcertCmd.PersistentFlags().StringVar(&ip, "ip", "", "ip of server, required for server certificate")
+	initcertCmd.PersistentFlags().StringVar(&dns, "dns", "", "dns of server, required for server certificate")
 	initcertCmd.PersistentFlags().BoolVar(&genClientCert, "client", false, "generate client cert")
 }
