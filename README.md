@@ -35,7 +35,7 @@ $ kubectl create -f ./yaml/crd/example_crd_obj.yaml
 ```
 ### Others
 
-Send ```----admission-control-config-file``` flag with admissionConfiguration file to kube apiserver.
+Send ```--admission-control-config-file``` flag with admissionConfiguration file to kube apiserver.
 
 ```yaml
 #admissionConfiguration demo
