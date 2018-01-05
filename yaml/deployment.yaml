@@ -15,7 +15,7 @@ spec:
       serviceAccountName: webhook-service-ac
       containers:
       - name: webhook-server
-        image: nightfury1204/validating-webhook-try:v1alpha1
+        image: nightfury1204/validating-webhook-try:v1alpha2
         imagePullPolicy: Always
         ports:
         - containerPort: 8080

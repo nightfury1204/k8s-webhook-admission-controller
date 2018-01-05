@@ -90,7 +90,7 @@ func getTlsConfig(clientset *kubernetes.Clientset, serverCert []byte, serverKey 
 	return &tls.Config{
 		Certificates: []tls.Certificate{sCert},
 		ClientCAs:    apiserverCA,
-		ClientAuth:   tls.NoClientCert,
+		ClientAuth:   tls.RequireAndVerifyClientCert,
 	},nil
 }
 

@@ -7,13 +7,39 @@ import (
 	"path/filepath"
 
 	"k8s.io/client-go/util/cert"
+	"crypto/rsa"
 )
 
 // initcertCmd represents the initcert command
-func GenerateCertificate(writeDir string, ip string,dns string, genClientCert bool) error {
+func GenerateCertificate(writeDir string, ip string,dns string,genCaCert bool,genServerCert bool, genClientCert bool) error {
 	dir := filepath.Join(writeDir, "pki")
 	createDir(dir)
 
+	if genCaCert {
+		err :=generateCaCertificates(dir)
+		if err!=nil {
+			return err
+		}
+	}
+
+	if genServerCert {
+		err := generateServerCertificates(dir,ip,dns)
+		if err!=nil {
+			return err
+		}
+	}
+
+	if genClientCert {
+		err := generateClientCertificates(dir)
+		if err!=nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func generateCaCertificates(dir string) error {
 	cfg := cert.Config{
 		CommonName: "ca",
 	}
@@ -31,6 +57,14 @@ func GenerateCertificate(writeDir string, ip string,dns string, genClientCert bo
 		return fmt.Errorf("Failed to init ca. Reason: %v.", err)
 	}
 	fmt.Println("Wrote ca certificates in ", dir)
+	return nil
+}
+
+func generateServerCertificates(dir,ip,dns string) error {
+	caCert,caKey,err := getCaPair()
+	if err !=nil {
+		return err
+	}
 
 	altNames := cert.AltNames{}
 	if len(ip)>0 {
@@ -59,9 +93,13 @@ func GenerateCertificate(writeDir string, ip string,dns string, genClientCert bo
 		return fmt.Errorf("Failed to init server certificate pair. Reason: %v.", err)
 	}
 	fmt.Println("Wrote server certificates in ", dir)
+	return nil
+}
 
-	if !genClientCert {
-		return nil
+func generateClientCertificates(dir string) error {
+	caCert,caKey,err := getCaPair()
+	if err !=nil {
+		return err
 	}
 	//create client.cert,client.key
 	cfgForClient := cert.Config{
@@ -81,6 +119,25 @@ func GenerateCertificate(writeDir string, ip string,dns string, genClientCert bo
 		return fmt.Errorf("Failed to init client certificate pair. Reason: %v.", err)
 	}
 	fmt.Println("Wrote client certificates in ", dir)
-
 	return nil
+}
+
+func getCaPair() (*x509.Certificate,*rsa.PrivateKey, error) {
+	caCertBytes,err := ReadCert("pki/ca.cert")
+	if err !=nil {
+		return nil,nil,err
+	}
+	caCert,err := cert.ParseCertsPEM(caCertBytes)
+	if err !=nil {
+		return nil,nil,err
+	}
+	caKeyBytes,err := ReadCert("pki/ca.key")
+	if err !=nil {
+		return nil,nil,err
+	}
+	caKey,err := cert.ParsePrivateKeyPEM(caKeyBytes)
+	if err !=nil {
+		return nil,nil,err
+	}
+	return caCert[0],caKey.(*rsa.PrivateKey),nil
 }

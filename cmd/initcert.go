@@ -27,6 +27,8 @@ var (
 	ip       string
 	dns       string
 	genClientCert bool
+	genCaCert bool
+	genServerCert bool
 )
 
 // initcertCmd represents the initcert command
@@ -34,7 +36,7 @@ var initcertCmd = &cobra.Command{
 	Use:   "initcert",
 	Short: "Create CA cert, server.cert, server.key, client.cert, client.key",
 	Run: func(cmd *cobra.Command, args []string) {
-		err := certificate.GenerateCertificate(writeDir, ip,dns,genClientCert)
+		err := certificate.GenerateCertificate(writeDir, ip,dns,genCaCert,genServerCert,genClientCert)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -47,4 +49,6 @@ func init() {
 	initcertCmd.PersistentFlags().StringVar(&ip, "ip", "", "ip of server, required for server certificate")
 	initcertCmd.PersistentFlags().StringVar(&dns, "dns", "", "dns of server, required for server certificate")
 	initcertCmd.PersistentFlags().BoolVar(&genClientCert, "client", false, "generate client cert")
+	initcertCmd.PersistentFlags().BoolVar(&genCaCert, "ca", false, "generate ca cert")
+	initcertCmd.PersistentFlags().BoolVar(&genServerCert, "server", false, "generate server cert")
 }
